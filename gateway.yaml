@@ -1,0 +1,35 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  namespace: stunner-system
+  name: livekit-udp-gateway-001
+spec:
+  gatewayClassName: reva-gatewayclass
+  addresses:
+  - type: IPAddress
+    value: xxx.xxx.xxx.xxx
+  listeners:
+    - allowedRoutes:
+        namespaces:
+          from: All
+      name: udp-listener
+      port: 3478
+      protocol: TURN-UDP
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  namespace: stunner-system
+  name: livekit-udp-gateway-002
+spec:
+  gatewayClassName: reva-gatewayclass
+  addresses:
+  - type: IPAddress
+    value: xxx.xxx.xxx.xxx
+  listeners:
+    - allowedRoutes:
+        namespaces:
+          from: All
+      name: udp-listener
+      port: 3478
+      protocol: TURN-UDP
