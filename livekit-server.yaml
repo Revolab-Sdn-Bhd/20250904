@@ -1,0 +1,135 @@
+replicaCount: 3
+
+image:
+  repository: livekit/livekit-server
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+terminationGracePeriodSeconds: 18000
+
+livekit:
+  port: 7880
+  prometheus_port: 7889
+  log_level: debug
+
+  rtc:
+    port_range_end: 60000
+    port_range_start: 50000
+    tcp_port: 7881
+    turn_servers:
+    - credential: yourpass
+      host: STUNNER_GW_1
+      password: yourpass
+      port: 3478
+      protocol: udp
+      username: youruser
+    - credential: yourpass	
+      host: STUNNER_GW_2
+      password: yourpass	
+      port: 3478	
+      protocol: udp	
+      username: youruser
+    use_external_ip: false
+  turn:
+    enabled: false
+    loadBalancerAnnotations: {}
+  redis:
+    address: REDIS_HOST
+    db: 2
+    username: "REDIS_USER"
+    password: "REDIS_PASS"
+  keys:
+    ACCESS_TOKEN: ACCESS_TOKEN_VALUE
+
+turnLoadbalancer:
+  enable: false
+
+podHostNetwork: false
+
+storeKeysInSecret:
+  enabled: false
+  existingSecret: ""
+  keys: {}
+
+loadBalancer:
+  type: do
+  clusterIssuer: letsencrypt-prod
+  tls:
+    - hosts:
+        - livekit.revocall-staging.com
+      secretName: livekit-cert
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 60
+
+resources:
+  requests:
+    cpu: 1500m
+    memory: 2048Mi
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: livekit-server
+        topologyKey: kubernetes.io/hostname
+
+nodeSelector:
+  pool: livekit
+
+tolerations: []
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 2000
+  runAsGroup: 2000
+  fsGroup: 2000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 2000
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "livekit-server"
+
+podAnnotations:
+  sidecar.istio.io/inject: "false"
+  linkerd.io/inject: disabled
+
+serviceMonitor:
+  # Specifies whether a service monitor should be created
+  create: true
+  # Annotations to add to the service monitor
+  annotations: 
+    release: kube-prometheus-stack
+  # The name of the service monitor to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # The scrape interval
+  interval: 30s
+
+gcp:
+  backendConfig:
+    # 10h timeout for websocket
+    timeoutSec: 36000
+    connectionDraining:
+      drainingTimeoutSec: 60
+
+deploymentStrategy: {}
+
+deploymentAnnotations: {}
+
