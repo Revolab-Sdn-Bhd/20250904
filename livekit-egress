@@ -1,0 +1,62 @@
+replicaCount: 1
+
+image:
+  repository: livekit/egress
+  pullPolicy: IfNotPresent
+
+egress:
+  log_level: info
+  health_port: 8080
+  prometheus_port: 9090
+  api_key: ACCESS_TOKEN
+  ws_url: "wss://livekit.revocall-staging.com"
+  api_secret: ACCESS_TOKEN_VALUE
+  redis:
+    address: REDIS_HOST
+    db: 2
+    username: "REDIS_USER"
+    password: "REDIS_PASS"
+  gcp:
+    bucket: rewa_recording_staging
+    credentials_json: |
+      {   
+         CREDENTIALS_JSON
+      }
+
+terminationGracePeriodSeconds: 3600
+
+nameOverride: ""
+fullnameOverride: ""
+
+autoscaling:
+  enabled: false
+
+nodeSelector: {}
+
+resources: 
+  requests:
+    cpu: 2
+    memory: 2048Mi
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "livekit-egress"
+
+podAnnotations:
+  sidecar.istio.io/inject: "false"
+  linkerd.io/inject: disabled
+
+podSecurityContext: {}
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  runAsUser: 1001
+
+tolerations: []
+
+affinity: {}
