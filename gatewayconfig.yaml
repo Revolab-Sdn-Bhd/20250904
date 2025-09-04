@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stunner-turn-secret
+  namespace: stunner-system
+data:
+  password: xxxxx
+  username: xxxxx
+type: Opaque
+---
+apiVersion: stunner.l7mp.io/v1
+kind: GatewayConfig
+metadata:
+  name: reva-gatewayconfig
+  namespace: stunner-system
+spec:
+  authRef:
+    group: ''
+    kind: Secret
+    name: stunner-turn-secret
+    namespace: stunner-system
+  authType: plaintext
+  dataplane: default
+  logLevel: all:info
+  realm: turn.revocall-staging.com
