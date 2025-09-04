@@ -59,6 +59,7 @@ loadBalancer:
     - hosts:
         - livekit.revocall-staging.com
       secretName: livekit-cert
+  servicePort: 80
 
 autoscaling:
   enabled: false
